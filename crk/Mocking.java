@@ -1,39 +1,41 @@
 package crk;
 
-import nano.http.bukkit.api.BukkitServerProvider;
 import nano.http.d2.consts.Mime;
 import nano.http.d2.consts.Status;
 import nano.http.d2.core.Response;
 import nano.http.d2.json.JSONArray;
 import nano.http.d2.json.NanoJSON;
-import nano.http.d2.utils.Misc;
+import nano.http.d2.serve.ServeProvider;
 
-import java.io.File;
 import java.util.Properties;
 
-public class Mocking extends BukkitServerProvider {
-    @Override
-    public void onEnable(String name, File dir, String uri) {
+public class Mocking implements ServeProvider {
+    private boolean printed = false;
 
-    }
-
-    @Override
-    public void onDisable() {
-
+    private void print() {
+        if (!printed) {
+            printed = true;
+            MfMain.log("\n" +
+                    "Stop the fire\n" +
+                    "A mockingbird sings\n" +
+                    "My name, laughing, calling me\n" +
+                    "Who’s the liar?\n" +
+                    "Maybe you’re in my bones, my blood\n" +
+                    "Take it all\n" +
+                    "Filling me up, I’m empty\n" +
+                    "Heartbeats\n" +
+                    "Counting down, if I could stop the clock, you’d win\n" +
+                    "\nAuthor : matim");
+        }
     }
 
     @Override
     public Response serve(String uri, String method, Properties header, Properties parms, Properties files) {
-        return null;
-    }
-
-    @Override
-    public Response fallback(String uri, String method, Properties header, Properties parms, Properties files) {
+        print();
         try {
             if (uri.endsWith("/verifySign")) {
                 return new Response(Status.HTTP_OK, Mime.MIME_PLAINTEXT, Mifan.md5(parms.getProperty("mac") + "KFCCRAZYTHURSDAYV50" + true));
             } else if (uri.endsWith("/sql")) {
-                System.out.println(parms.getProperty("json"));
                 NanoJSON json = new NanoJSON(parms.getProperty("json"));
                 String type = json.getString("dbType");
                 json = json.getJSONObject("dbSql");
@@ -66,11 +68,10 @@ public class Mocking extends BukkitServerProvider {
                     default:
                         break;
                 }
-                System.out.println(sb);
                 return new Response(Status.HTTP_OK, Mime.MIME_PLAINTEXT, sb.toString());
             }
         } catch (Exception ignored) {
         }
-        return new Response(Status.HTTP_FORBIDDEN, Mime.MIME_PLAINTEXT, Misc.BOM + "米饭插件验证服务器Mock\n适用于全部米饭插件\n\n使用方法：\n1，修改host，将admin.ljxmc.top指向本站\n2，使用激活码KFCCRAZYTHURSDAYV50\n\n作者：神秘人");
+        return new Response(Status.HTTP_NOTFOUND, Mime.MIME_PLAINTEXT, "404");
     }
 }

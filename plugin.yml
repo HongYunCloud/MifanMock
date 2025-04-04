@@ -1,0 +1,6 @@
+name: MFMock
+version: 1.0b
+main: crk.MfMain
+api-version: 1.13
+author: HYC
+description: Open Mock
