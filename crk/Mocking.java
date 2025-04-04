@@ -7,6 +7,10 @@ import nano.http.d2.json.JSONArray;
 import nano.http.d2.json.NanoJSON;
 import nano.http.d2.serve.ServeProvider;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Properties;
 
 public class Mocking implements ServeProvider {
@@ -39,6 +43,20 @@ public class Mocking implements ServeProvider {
                 NanoJSON json = new NanoJSON(parms.getProperty("json"));
                 String type = json.getString("dbType");
                 json = json.getJSONObject("dbSql");
+                String dbSqlStr = json.getString("dbSqlStr");
+                if (dbSqlStr != null) {
+                    try {
+                        String token = header.getProperty("signToken");
+                        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+                        cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(token.getBytes(), "AES"));
+                        byte[] finalDbSqlBytes = cipher.doFinal(Base64.getDecoder().decode(dbSqlStr.getBytes(StandardCharsets.UTF_8)));
+                        String finalDbSqlString = new String(finalDbSqlBytes, StandardCharsets.UTF_8);
+                        json = new NanoJSON(finalDbSqlString);
+                    } catch (Exception e) {
+                        return new Response(Status.HTTP_NOTFOUND, Mime.MIME_PLAINTEXT, "404");
+                    }
+                }
+
                 StringBuilder sb = new StringBuilder();
                 switch (type) {
                     case "updateDataSql":
