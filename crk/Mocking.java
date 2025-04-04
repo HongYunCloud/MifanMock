@@ -43,9 +43,9 @@ public class Mocking implements ServeProvider {
                 NanoJSON json = new NanoJSON(parms.getProperty("json"));
                 String type = json.getString("dbType");
                 json = json.getJSONObject("dbSql");
-                String dbSqlStr = json.getString("dbSqlStr");
-                if (dbSqlStr != null) {
+                if (json.has("dbSqlStr")) {
                     try {
+                        String dbSqlStr = json.getString("dbSqlStr");
                         String token = header.getProperty("signToken");
                         Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
                         cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(token.getBytes(), "AES"));
