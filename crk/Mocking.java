@@ -44,7 +44,17 @@ public class Mocking implements ServeProvider {
                 if (!sign.equals(kfc)) {
                     MfMain.log("Consider using code: " + kfc);
                 }
-                return new Response(Status.HTTP_OK, Mime.MIME_PLAINTEXT, Mifan.md5(parms.getProperty("mac") + sign + true));
+
+                String ans = Mifan.md5(parms.getProperty("mac") + sign + true);
+
+                String ver = (String) parms.getOrDefault("signVersion", "2");
+                if (!"3".equals(ver)) {
+                    return new Response(Status.HTTP_OK, Mime.MIME_PLAINTEXT, ans);
+                }
+                NanoJSON json = new NanoJSON();
+                json.put("sign", ans);
+                json.put("result", true);
+                return new Response(Status.HTTP_OK, Mime.MIME_JSON, json.toString());
             } else if (uri.endsWith("/sql")) {
                 NanoJSON json = new NanoJSON(parms.getProperty("json"));
                 String type = json.getString("dbType");
