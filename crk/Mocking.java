@@ -33,12 +33,18 @@ public class Mocking implements ServeProvider {
         }
     }
 
+    private static final String kfc = "KFCCRAZYTHURSDAYV50";
+
     @Override
     public Response serve(String uri, String method, Properties header, Properties parms, Properties files) {
         print();
         try {
             if (uri.endsWith("/verifySign")) {
-                return new Response(Status.HTTP_OK, Mime.MIME_PLAINTEXT, Mifan.md5(parms.getProperty("mac") + "KFCCRAZYTHURSDAYV50" + true));
+                String sign = parms.getProperty("sign");
+                if (!sign.equals(kfc)) {
+                    MfMain.log("Consider using code: " + kfc);
+                }
+                return new Response(Status.HTTP_OK, Mime.MIME_PLAINTEXT, Mifan.md5(parms.getProperty("mac") + sign + true));
             } else if (uri.endsWith("/sql")) {
                 NanoJSON json = new NanoJSON(parms.getProperty("json"));
                 String type = json.getString("dbType");

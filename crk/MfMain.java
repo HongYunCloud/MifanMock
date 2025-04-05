@@ -1,6 +1,7 @@
 package crk;
 
 import nano.http.bukkit.mock.InjectRegistry;
+import nano.http.d2.console.Console;
 import nano.http.d2.consts.Mime;
 import nano.http.d2.consts.Status;
 import nano.http.d2.core.Response;
@@ -15,6 +16,7 @@ public class MfMain extends JavaPlugin {
     @Override
     public void onLoad() {
         instance = this;
+        Console.magic = false;
         log("Loading CRK...");
         InjectRegistry.register("admin.ljxmc.top", new Mocking());
         InjectRegistry.register("ricedoc.handyplus.cn", new ServeProvider() {
