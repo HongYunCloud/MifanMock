@@ -46,9 +46,8 @@ public class Mocking implements ServeProvider {
                 }
 
                 String ans = Mifan.md5(parms.getProperty("mac") + sign + true);
-
                 String ver = (String) parms.getOrDefault("signVersion", "2");
-                if (!"3".equals(ver)) {
+                if (!ver.contains("3")) {
                     return new Response(Status.HTTP_OK, Mime.MIME_PLAINTEXT, ans);
                 }
                 NanoJSON json = new NanoJSON();

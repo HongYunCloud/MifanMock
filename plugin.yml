@@ -2,5 +2,6 @@ name: MFMock
 version: 1.0b
 main: crk.MfMain
 api-version: 1.13
+folia-supported: true
 author: HYC
 description: Open Mock
